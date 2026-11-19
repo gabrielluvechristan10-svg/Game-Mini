@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MATH MATRIKS — Transformasi Matriks Kelas XI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(180deg, #E0F7FF 0%, #BAE6FD 45%, #E0F2FE 100%);
+      min-height: 100vh;
+    }
+    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-9px) rotate(2deg); }
+    }
+    @keyframes blinkEyes {
+      0%, 92%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+    @keyframes waveTentacle {
+      0%, 100% { transform: rotate(-4deg); }
+      50% { transform: rotate(5deg); }
+    }
+    .float-oli { animation: floatSlow 3.4s ease-in-out infinite; }
+    .oli-eyes { transform-origin: center 48px; animation: blinkEyes 4.5s infinite; }
+    .oli-tentacles { transform-origin: 60px 75px; animation: waveTentacle 2.6s ease-in-out infinite; }
+  </style>
+</head>
+<body class="text-slate-800 relative overflow-x-hidden pb-20 sm:pb-8">
+
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div class="absolute top-16 left-[8%] text-3xl opacity-35">🐠</div>
+    <div class="absolute top-36 right-[10%] text-3xl opacity-30">🐡</div>
+    <div class="absolute bottom-28 left-[14%] text-2xl opacity-35">🫧</div>
+    <div class="absolute bottom-24 right-[16%] text-2xl opacity-35">🫧</div>
+  </div>
+
+  <header class="sticky top-0 z-30 bg-white/85 backdrop-blur-md border-b border-sky-200 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <button onclick="app.go('home')" class="flex items-center gap-2.5 text-left">
+        <span class="text-2xl">🌊</span>
+        <div>
+          <div class="font-extrabold text-sky-700 tracking-tight leading-none">MATH MATRIKS</div>
+          <div class="text-[11px] font-mono-code text-sky-600 mt-0.5">Transformasi Matriks • XI</div>
+        </div>
+      </button>
+
+      <div class="flex items-center gap-2">
+        <nav class="hidden sm:flex items-center gap-1 mr-2 text-sm font-semibold">
+          <button onclick="app.go('home')" class="px-3 py-1.5 rounded-lg hover:bg-sky-100 text-slate-700">Kuis</button>
+          <button onclick="app.go('leaderboard')" class="px-3 py-1.5 rounded-lg hover:bg-sky-100 text-slate-700">Peringkat</button>
+          <button onclick="app.go('admin')" class="px-3 py-1.5 rounded-lg hover:bg-sky-100 text-slate-700">Admin</button>
+        </nav>
+
+        <div id="audio-badge" onclick="audioEngine.unlock()" class="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-600 text-white shadow">
+          <span>🔊</span>
+          <span id="audio-status">Musik On</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="app-root" class="relative z-10 max-w-4xl mx-auto px-4 pt-6"></main>
+
+  <div class="fixed bottom-16 sm:bottom-4 right-4 z-40 flex items-end gap-2.5 max-w-xs sm:max-w-sm">
+    <div class="bg-white/95 border border-sky-200 rounded-2xl rounded-br-none px-3.5 py-2.5 shadow-lg text-xs sm:text-sm text-slate-700">
+      <span id="oli-speech">Hai! Musik lautan otomatis aktif, dan kuis ini cuma <b>1 kali percobaan</b> ya! 🐙✨</span>
+    </div>
+    <button onclick="app.pokeOli()" class="float-oli bg-white/95 border-2 border-sky-300 rounded-full p-1.5 shadow-xl hover:scale-105 transition cursor-pointer shrink-0" title="Klik Oli si Gurita Pintar">
+      <svg width="64" height="64" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="oliBody" cx="50%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#FF8FA3"/>
+            <stop offset="60%" stop-color="#FB7185"/>
+            <stop offset="100%" stop-color="#E11D48"/>
+          </radialGradient>
+        </defs>
+        <g class="oli-tentacles">
+          <path d="M32 76 C18 82, 16 98, 26 102 C33 104, 38 94, 42 84" stroke="#E11D48" stroke-width="9" stroke-linecap="round"/>
+          <path d="M46 82 C40 96, 42 108, 50 108 C56 108, 56 96, 56 85" stroke="#FB7185" stroke-width="9" stroke-linecap="round"/>
+          <path d="M74 82 C80 96, 78 108, 70 108 C64 108, 64 96, 64 85" stroke="#FB7185" stroke-width="9" stroke-linecap="round"/>
+          <path d="M88 76 C102 82, 104 98, 94 102 C87 104, 82 94, 78 84" stroke="#E11D48" stroke-width="9" stroke-linecap="round"/>
+        </g>
+        <ellipse cx="60" cy="52" rx="34" ry="32" fill="url(#oliBody)"/>
+        <ellipse cx="47" cy="34" rx="9" ry="5" transform="rotate(-25 47 34)" fill="white" fill-opacity="0.45"/>
+        <polygon points="60,12 84,21 60,29 36,21" fill="#0284C7"/>
+        <rect x="49" y="23" width="22" height="6" rx="2" fill="#0369A1"/>
+        <line x1="82" y1="21" x2="86" y2="32" stroke="#FACC15" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="86" cy="33" r="2.5" fill="#FACC15"/>
+        <g class="oli-eyes">
+          <circle cx="48" cy="52" r="7" fill="white"/>
+          <circle cx="72" cy="52" r="7" fill="white"/>
+          <circle cx="49" cy="52" r="4" fill="#0F172A"/>
+          <circle cx="73" cy="52" r="4" fill="#0F172A"/>
+          <circle cx="50.5" cy="50" r="1.5" fill="white"/>
+          <circle cx="74.5" cy="50" r="1.5" fill="white"/>
+        </g>
+        <ellipse cx="39" cy="60" rx="4.5" ry="2.5" fill="#FDA4AF"/>
+        <ellipse cx="81" cy="60" rx="4.5" ry="2.5" fill="#FDA4AF"/>
+        <path d="M53 63 Q60 70 67 63" stroke="#881337" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="sm:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 border-t border-sky-200 py-2 flex justify-around text-xs font-semibold text-slate-600">
+    <button onclick="app.go('home')" class="flex flex-col items-center gap-0.5"><span>🏠</span><span>Kuis</span></button>
+    <button onclick="app.go('leaderboard')" class="flex flex-col items-center gap-0.5"><span>🏆</span><span>Peringkat</span></button>
+    <button onclick="app.go('admin')" class="flex flex-col items-center gap-0.5"><span>🔐</span><span>Admin</span></button>
+  </div>
+
+  <script>
+    class OceanAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.loopTimer = null;
+        this.step = 0;
+        this.notes = [523.25, 659.25, 783.99, 659.25, 587.33, 783.99, 880.00, 783.99];
+      }
+
+      unlock() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioCtx();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+        if (!this.loopTimer) {
+          this.startBacksound();
+        }
+      }
+
+      startBacksound() {
+        this.loopTimer = setInterval(() => {
+          if (!this.ctx || this.ctx.state !== 'running') return;
+          const freq = this.notes[this.step % this.notes.length];
+          this.playTone(freq, 0.28, 'sine', 0.035);
+          this.step++;
+        }, 420);
+      }
+
+      playTone(freq, duration = 0.12, type = 'sine', gainPeak = 0.08) {
+        this.unlock();
+        if (!this.ctx || this.ctx.state !== 'running') return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(gainPeak, now + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + duration + 0.02);
+      }
+
+      playClick(freq = 580, duration = 0.07) {
+        this.playTone(freq, duration, 'triangle', 0.08);
+      }
+
+      playSuccess() {
+        const fanfare = [523.25, 659.25, 783.99, 1046.5];
+        fanfare.forEach((f, idx) => {
+          setTimeout(() => this.playTone(f, 0.22, 'triangle', 0.1), idx * 110);
+        });
+      }
+    }
+
+    const audioEngine = new OceanAudioEngine();
+    ['pointerdown', 'keydown', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, () => audioEngine.unlock(), { once: false, passive: true });
+    });
+
+    const QUESTIONS = [
+      {
+        id: 1,
+        topik: 'Translasi',
+        teks: 'Titik A(3, -2) ditranslasikan oleh T = (-4, 5). Bayangan titik A adalah...',
+        opsi: { A: "A'(-1, 3)", B: "A'(7, -7)", C: "A'(-1, -7)", D: "A'(1, 3)", E: "A'(-7, 3)" },
+        benar: 'A',
+        petunjuk: 'Tambahkan x dengan -4 dan y dengan 5.'
+      },
+      {
+        id: 2,
+        topik: 'Refleksi y = x',
+        teks: 'Titik B(-4, 7) dicerminkan terhadap garis y = x. Bayangannya adalah...',
+        opsi: { A: "B'(4, -7)", B: "B'(-7, 4)", C: "B'(7, -4)", D: "B'(-4, -7)", E: "B'(7, 4)" },
+        benar: 'C',
+        petunjuk: 'Tukar posisi koordinat (x, y) menjadi (y, x).'
+      },
+      {
+        id: 3,
+        topik: 'Rotasi 90° O(0,0)',
+        teks: 'Titik C(2, 5) dirotasi 90° berlawanan arah jarum jam berpusat di O(0,0). Hasilnya...',
+        opsi: { A: "C'(5, -2)", B: "C'(-5, 2)", C: "C'(-2, -5)", D: "C'(5, 2)", E: "C'(-5, -2)" },
+        benar: 'B',
+        petunjuk: 'Rumus rotasi 90° CCW: (x, y) -> (-y, x).'
+      },
+      {
+        id: 4,
+        topik: 'Dilatasi O(0,0)',
+        teks: 'Titik D(-3, 4) didilatasi dengan pusat O(0,0) dan faktor skala k = -2. Bayangannya...',
+        opsi: { A: "D'(-6, 8)", B: "D'(6, 8)", C: "D'(-6, -8)", D: "D'(6, -8)", E: "D'(8, -6)" },
+        benar: 'D',
+        petunjuk: 'Kalikan masing-masing koordinat dengan -2.'
+      },
+      {
+        id: 5,
+        topik: 'Komposisi Transformasi',
+        teks: 'Titik E(1, 2) direfleksi terhadap sumbu X, lalu ditranslasi (2, -3). Koordinat akhirnya...',
+        opsi: { A: "E'(3, -5)", B: "E'(-1, -1)", C: "E'(3, 1)", D: "E'(1, -5)", E: "E'(-3, 5)" },
+        benar: 'A',
+        petunjuk: 'Refleksi sumbu X -> (1, -2), lalu geser (2, -3).'
+      }
+    ];
+
+    async function sha256(text) {
+      const buf = new TextEncoder().encode(text);
+      const hash = await crypto.subtle.digest('SHA-256', buf);
+      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    class MathMatriksApp {
+      constructor() {
+        this.LOCK_KEY = 'mathmatriks_completed_lock';
+        this.LB_KEY = 'mathmatriks_leaderboard';
+        this.view = 'home';
+        this.idx = 0;
+        this.jawaban = {};
+        this.detik = 0;
+        this.timer = null;
+        this.adminUnlocked = false;
+        this.render();
+      }
+
+      getLockData() {
+        try {
+          return JSON.parse(localStorage.getItem(this.LOCK_KEY) || 'null');
+        } catch {
+          return null;
+        }
+      }
+
+      say(msg) {
+        const el = document.getElementById('oli-speech');
+        if (el) el.innerHTML = msg;
+      }
+
+      pokeOli() {
+        audioEngine.playClick(680, 0.08);
+        const lines = [
+          'Cek tanda minus saat perkalian matriks transformasi ya! 🐙',
+          'Game ini hanya 1 kali percobaan per perangkat, kerjakan dengan teliti! 🔒',
+          'Musik lautan tetap menyala menemani kamu berpikir! 🎶🌊'
+        ];
+        this.say(lines[Math.floor(Math.random() * lines.length)]);
+      }
+
+      go(nextView) {
+        audioEngine.playClick(520, 0.06);
+        this.view = nextView;
+        if (nextView !== 'quiz' && this.timer) {
+          clearInterval(this.timer);
+          this.timer = null;
+        }
+        this.render();
+      }
+
+      mulaiKuis(e) {
+        e.preventDefault();
+        if (this.getLockData()) {
+          this.render();
+          return;
+        }
+        audioEngine.playClick(640, 0.09);
+        const nama = document.getElementById('input-nama').value.trim();
+        const kelas = document.getElementById('input-kelas').value;
+        if (!nama) return;
+
+        this.peserta = { nama, kelas };
+        this.idx = 0;
+        this.jawaban = {};
+        this.detik = 0;
+        this.view = 'quiz';
+
+        if (this.timer) clearInterval(this.timer);
+        this.timer = setInterval(() => {
+          this.detik++;
+          const t = document.getElementById('timer-val');
+          if (t) t.textContent = `${this.detik}s`;
+        }, 1000);
+
+        this.say(`Semangat ${nama}! Ingat, kesempatan mengerjakan hanya 1 kali! 🐙`);
+        this.render();
+      }
+
+      pilihOpsi(key) {
+        audioEngine.playClick(760, 0.07);
+        this.jawaban[this.idx] = key;
+        this.render();
+      }
+
+      nextSoal() {
+        audioEngine.playClick(600, 0.07);
+        if (this.idx < QUESTIONS.length - 1) {
+          this.idx++;
+          this.render();
+        }
+      }
+
+      prevSoal() {
+        audioEngine.playClick(460, 0.07);
+        if (this.idx > 0) {
+          this.idx--;
+          this.render();
+        }
+      }
+
+      selesaiKuis() {
+        if (this.timer) clearInterval(this.timer);
+        let benarCount = 0;
+        QUESTIONS.forEach((q, i) => {
+          if (this.jawaban[i] === q.benar) benarCount++;
+        });
+        const skor = benarCount * 20;
+
+        const dataBaru = {
+          nama: this.peserta.nama,
+          kelas: this.peserta.kelas,
+          skor,
+          waktu: this.detik,
+          tanggal: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+        };
+
+        const list = JSON.parse(localStorage.getItem(this.LB_KEY) || '[]');
+        list.push(dataBaru);
+        localStorage.setItem(this.LB_KEY, JSON.stringify(list));
+        localStorage.setItem(this.LOCK_KEY, JSON.stringify(dataBaru));
+
+        audioEngine.playSuccess();
+        this.say(`Selesai! Skor ${this.peserta.nama}: ${skor}. Perangkat kini terkunci (1x percobaan). 🔒🐙`);
+        this.view = 'result';
+        this.render();
+      }
+
+      async bukaAdmin(e) {
+        e.preventDefault();
+        audioEngine.playClick(580, 0.07);
+        const pass = document.getElementById('admin-pass').value;
+        const hashInput = await sha256(pass);
+        const hashTarget = await sha256('admin2026');
+        if (hashInput === hashTarget) {
+          this.adminUnlocked = true;
+          audioEngine.playSuccess();
+          this.render();
+        } else {
+          this.say('Sandi admin salah. Periksa kembali ya! ⚠️🐙');
+        }
+      }
+
+      resetSemuaData() {
+        audioEngine.playClick(420, 0.09);
+        localStorage.removeItem(this.LB_KEY);
+        localStorage.removeItem(this.LOCK_KEY);
+        this.say('Data peringkat dan kunci 1 percobaan berhasil di-reset oleh Admin! 🔓🐙');
+        this.render();
+      }
+
+      render() {
+        const root = document.getElementById('app-root');
+        const lockedData = this.getLockData();
+
+        if (this.view === 'home') {
+          if (lockedData) {
+            root.innerHTML = `
+              <div class="bg-white/95 border border-sky-200 rounded-3xl p-7 shadow-xl max-w-md mx-auto text-center">
+                <div class="text-5xl mb-3">🔒</div>
+                <span class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full mb-2">Batas 1 Percobaan Tercapai</span>
+                <h2 class="text-2xl font-extrabold text-slate-900">Kuis Telah Selesai</h2>
+                <p class="text-sm text-slate-600 mt-1">${lockedData.nama} (${lockedData.kelas})</p>
+                <div class="my-5 bg-sky-50 border border-sky-200 rounded-2xl p-4">
+                  <div class="text-xs uppercase font-bold text-sky-700">Skor Tercatat</div>
+                  <div class="text-4xl font-mono-code font-extrabold text-sky-600 mt-1">${lockedData.skor}</div>
+                  <div class="text-xs text-slate-500 mt-1">Waktu: ${lockedData.waktu} detik</div>
+                </div>
+                <button onclick="app.go('leaderboard')" class="w-full py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold shadow transition">
+                  Lihat Papan Peringkat 🏆
+                </button>
+              </div>
+            `;
+            return;
+          }
+
+          root.innerHTML = `
+            <div class="bg-white/90 border border-sky-200 rounded-3xl p-6 sm:p-8 shadow-xl grid md:grid-cols-2 gap-6 items-center">
+              <div>
+                <span class="inline-block bg-sky-100 text-sky-700 text-xs font-bold px-3 py-1 rounded-full mb-3">🌊 Ocean Breeze • 1x Percobaan</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">Kuis Transformasi Matriks</h1>
+                <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+                  5 soal pilihan ganda transformasi matriks kelas XI. Setiap perangkat hanya memiliki <b>1 kali kesempatan</b> mengerjakan.
+                </p>
+              </div>
+              <form onsubmit="app.mulaiKuis(event)" class="bg-sky-50/80 border border-sky-200 rounded-2xl p-5 space-y-3.5">
+                <div>
+                  <label class="block text-xs font-bold uppercase text-sky-800 mb-1">Nama Siswa</label>
+                  <input id="input-nama" type="text" required placeholder="Masukkan namamu" class="w-full px-3.5 py-2.5 rounded-xl border border-sky-200 bg-white text-sm outline-none focus:ring-2 focus:ring-sky-500" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold uppercase text-sky-800 mb-1">Kelas</label>
+                  <select id="input-kelas" class="w-full px-3.5 py-2.5 rounded-xl border border-sky-200 bg-white text-sm outline-none focus:ring-2 focus:ring-sky-500">
+                    <option value="XI.1">XI.1</option>
+                    <option value="XI.2">XI.2</option>
+                    <option value="XI.3">XI.3</option>
+                    <option value="XI.4">XI.4</option>
+                  </select>
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-sm shadow transition">
+                  Mulai Kuis (1x Kesempatan) 🚀
+                </button>
+              </form>
+            </div>
+          `;
+        } else if (this.view === 'quiz') {
+          const q = QUESTIONS[this.idx];
+          const terpilih = this.jawaban[this.idx];
+          root.innerHTML = `
+            <div class="bg-white/95 border border-sky-200 rounded-3xl p-6 sm:p-8 shadow-xl max-w-2xl mx-auto">
+              <div class="flex items-center justify-between text-xs font-mono-code text-sky-700 bg-sky-50 px-3.5 py-2 rounded-xl mb-5">
+                <span>Soal ${this.idx + 1}/${QUESTIONS.length} • ${q.topik}</span>
+                <span id="timer-val">${this.detik}s</span>
+              </div>
+              <h2 class="text-lg sm:text-xl font-bold text-slate-900 mb-4">${q.teks}</h2>
+              <div class="space-y-2.5 mb-5">
+                ${Object.entries(q.opsi).map(([k, v]) => `
+                  <button onclick="app.pilihOpsi('${k}')" class="w-full text-left px-4 py-3 rounded-xl border text-sm flex items-center gap-3 transition ${terpilih === k ? 'border-sky-600 bg-sky-50 text-sky-800 font-bold' : 'border-slate-200 hover:bg-slate-50'}">
+                    <span class="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 font-mono-code font-bold flex items-center justify-center text-xs">${k}</span>
+                    <span>${v}</span>
+                  </button>
+                `).join('')}
+              </div>
+              <div class="text-xs bg-amber-50 border border-amber-200 text-amber-900 rounded-xl p-3 mb-5">
+                💡 <b>Petunjuk Oli:</b> ${q.petunjuk}
+              </div>
+              <div class="flex justify-between items-center">
+                <button onclick="app.prevSoal()" ${this.idx === 0 ? 'disabled' : ''} class="px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold disabled:opacity-40">Sebelumnya</button>
+                ${this.idx < QUESTIONS.length - 1
+                  ? `<button onclick="app.nextSoal()" class="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold">Selanjutnya</button>`
+                  : `<button onclick="app.selesaiKuis()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold">Kumpulkan Final 🎯</button>`
+                }
+              </div>
+            </div>
+          `;
+        } else if (this.view === 'result') {
+          const h = lockedData;
+          root.innerHTML = `
+            <div class="bg-white/95 border border-sky-200 rounded-3xl p-7 shadow-xl max-w-md mx-auto text-center">
+              <div class="text-5xl mb-3">🏆</div>
+              <h2 class="text-2xl font-extrabold text-slate-900">Jawaban Terkunci!</h2>
+              <p class="text-sm text-slate-600 mt-1">${h.nama} (${h.kelas})</p>
+              <div class="my-5 bg-sky-50 border border-sky-200 rounded-2xl p-4">
+                <div class="text-xs uppercase font-bold text-sky-700">Skor Akhir (1 Percobaan)</div>
+                <div class="text-4xl font-mono-code font-extrabold text-sky-600 mt-1">${h.skor}</div>
+                <div class="text-xs text-slate-500 mt-1">Waktu: ${h.waktu} detik</div>
+              </div>
+              <button onclick="app.go('leaderboard')" class="w-full py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold shadow transition">
+                Lihat Papan Peringkat 🏆
+              </button>
+            </div>
+          `;
+        } else if (this.view === 'leaderboard') {
+          const list = JSON.parse(localStorage.getItem(this.LB_KEY) || '[]')
+            .sort((a, b) => b.skor - a.skor || a.waktu - b.waktu);
+          root.innerHTML = `
+            <div class="bg-white/95 border border-sky-200 rounded-3xl p-6 shadow-xl">
+              <h2 class="text-xl font-extrabold text-slate-900 mb-4">🏆 Papan Peringkat</h2>
+              ${list.length === 0
+                ? `<p class="text-sm text-slate-500 py-6 text-center">Belum ada data skor tersimpan.</p>`
+                : `<div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead><tr class="border-b text-xs text-slate-400 uppercase"><th class="py-2 px-3">#</th><th class="py-2 px-3">Nama</th><th class="py-2 px-3">Kelas</th><th class="py-2 px-3 text-center">Skor</th><th class="py-2 px-3 text-center">Waktu</th></tr></thead><tbody class="divide-y">${list.map((row, i) => `<tr><td class="py-2.5 px-3 font-mono-code font-bold">${i + 1}</td><td class="py-2.5 px-3 font-semibold">${row.nama}</td><td class="py-2.5 px-3 text-slate-500">${row.kelas}</td><td class="py-2.5 px-3 text-center font-mono-code font-bold text-sky-600">${row.skor}</td><td class="py-2.5 px-3 text-center font-mono-code text-xs">${row.waktu}s</td></tr>`).join('')}</tbody></table></div>`
+              }
+            </div>
+          `;
+        } else if (this.view === 'admin') {
+          if (!this.adminUnlocked) {
+            root.innerHTML = `
+              <form onsubmit="app.bukaAdmin(event)" class="bg-white/95 border border-sky-200 rounded-3xl p-6 shadow-xl max-w-sm mx-auto space-y-4">
+                <h2 class="text-lg font-extrabold text-slate-900">🔐 Akses Admin</h2>
+                <input id="admin-pass" type="password" required placeholder="Masukkan sandi admin" class="w-full px-3.5 py-2.5 rounded-xl border border-sky-200 text-sm outline-none focus:ring-2 focus:ring-sky-500" />
+                <button type="submit" class="w-full py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold">Masuk</button>
+              </form>
+            `;
+          } else {
+            const list = JSON.parse(localStorage.getItem(this.LB_KEY) || '[]');
+            root.innerHTML = `
+              <div class="bg-white/95 border border-sky-200 rounded-3xl p-6 shadow-xl space-y-4">
+                <div class="flex items-center justify-between">
+                  <h2 class="text-lg font-extrabold text-slate-900">⚙️ Panel Admin (${list.length} peserta)</h2>
+                  <button onclick="app.resetSemuaData()" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold">Reset Skor & Kunci Perangkat</button>
+                </div>
+                <p class="text-xs text-slate-500">Hanya Admin yang dapat mereset kunci 1 percobaan (<code>mathmatriks_completed_lock</code>).</p>
+              </div>
+            `;
+          }
+        }
+      }
+    }
+
+    const app = new MathMatriksApp();
+  </script>
+</body>
+</html>
